@@ -49,7 +49,7 @@ def parse_args():
     parser.add_argument('--cache', type=bool, default=True)
     parser.add_argument('--cos_lr', type=bool, default=True)
     parser.add_argument('--amp', type=bool, default=True)
-    parser.add_argument('--lrf', type=float, default=1e-4)
+    parser.add_argument('--lrf', type=float, default=5e-5)
     parser.add_argument('--momentum', type=float, default=0.937)
     parser.add_argument('--weight_decay', type=float, default=0.0005)
     parser.add_argument('--warmup_epochs', type=int, default=3)
@@ -235,18 +235,7 @@ if __name__ == '__main__':
     args = parse_args()
     seed_everything(args.seed)
 
-    # wandb init
-    wandb_init(args)
-    class_labels = get_class_labels()
-    run = wandb_run(args)
-    PATH_TRAIN_IMAGES = "../open/yolo/train/"
-    PATH_TRAIN_LABELS = "../open/yolo/train/"
-    PATH_VAL_IMAGES = "../open/yolo/valid/"
-    PATH_VAL_LABELS = "../open/yolo/valid/"
-    execute(PATH_TRAIN_IMAGES, PATH_TRAIN_LABELS, "Test", class_labels, run)
-    execute(PATH_VAL_IMAGES, PATH_VAL_LABELS, "Validation", class_labels, run)
-
-
+    # initialize
     initialize()
     image_paths = sorted(glob("../open/train/*.png"))
     txt_paths = sorted(glob("../open/train/*.txt"))
@@ -274,6 +263,16 @@ if __name__ == '__main__':
     with open("../open/yolo/custom.yaml", "w") as writer:
         yaml.dump(yaml_data, writer)
 
+    # wandb init
+    wandb_init(args)
+    class_labels = get_class_labels()
+    run = wandb_run(args)
+    PATH_TRAIN_IMAGES = "../open/yolo/train/"
+    PATH_TRAIN_LABELS = "../open/yolo/train/"
+    PATH_VAL_IMAGES = "../open/yolo/valid/"
+    PATH_VAL_LABELS = "../open/yolo/valid/"
+    execute(PATH_TRAIN_IMAGES, PATH_TRAIN_LABELS, "Test", class_labels, run)
+    execute(PATH_VAL_IMAGES, PATH_VAL_LABELS, "Validation", class_labels, run)
     
     #model = YOLO(f"{MODEL}/train/weights/last.pt")
     model = YOLO("yolov8x")
