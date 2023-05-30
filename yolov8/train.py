@@ -235,44 +235,44 @@ if __name__ == '__main__':
     args = parse_args()
     seed_everything(args.seed)
 
-    # initialize
-    initialize()
-    image_paths = sorted(glob("../open/train/*.png"))
-    txt_paths = sorted(glob("../open/train/*.txt"))
+    # # initialize
+    # initialize()
+    # image_paths = sorted(glob("../open/train/*.png"))
+    # txt_paths = sorted(glob("../open/train/*.txt"))
 
-    train_images_paths, valid_images_paths, train_txt_paths, valid_txt_paths = train_test_split(image_paths, txt_paths, test_size=0.1, random_state=args.seed)
+    # train_images_paths, valid_images_paths, train_txt_paths, valid_txt_paths = train_test_split(image_paths, txt_paths, test_size=0.1, random_state=args.seed)
 
-    make_yolo_dataset(train_images_paths, train_txt_paths, "train")
-    make_yolo_dataset(valid_images_paths, valid_txt_paths, "valid")
-    make_yolo_dataset(sorted(glob("../open/test/*.png")), None, "test")
+    # make_yolo_dataset(train_images_paths, train_txt_paths, "train")
+    # make_yolo_dataset(valid_images_paths, valid_txt_paths, "valid")
+    # make_yolo_dataset(sorted(glob("../open/test/*.png")), None, "test")
 
-    with open("../open/classes.txt", "r") as reader:
-        lines = reader.readlines()
-        classes = [line.strip().split(",")[1] for line in lines]
+    # with open("../open/classes.txt", "r") as reader:
+    #     lines = reader.readlines()
+    #     classes = [line.strip().split(",")[1] for line in lines]
 
-    yaml_data = {
-                "names": classes,
-                "nc": len(classes),
-                # "path": "/Users/wooyeolbaek/Downloads/untitled_folder/object-detection-for-synth-data/open/yolo",
-                "path": "/opt/ml/yolo8",
-                "train": "train",
-                "val": "valid",
-                "test": "test"
-                }
+    # yaml_data = {
+    #             "names": classes,
+    #             "nc": len(classes),
+    #             # "path": "/Users/wooyeolbaek/Downloads/untitled_folder/object-detection-for-synth-data/open/yolo",
+    #             "path": "/opt/ml/yolo8",
+    #             "train": "train",
+    #             "val": "valid",
+    #             "test": "test"
+    #             }
 
-    with open("../open/yolo/custom.yaml", "w") as writer:
-        yaml.dump(yaml_data, writer)
+    # with open("../open/yolo/custom.yaml", "w") as writer:
+    #     yaml.dump(yaml_data, writer)
 
-    # wandb init
-    wandb_init(args)
-    class_labels = get_class_labels()
-    run = wandb_run(args)
-    PATH_TRAIN_IMAGES = "../open/yolo/train/"
-    PATH_TRAIN_LABELS = "../open/yolo/train/"
-    PATH_VAL_IMAGES = "../open/yolo/valid/"
-    PATH_VAL_LABELS = "../open/yolo/valid/"
-    execute(PATH_TRAIN_IMAGES, PATH_TRAIN_LABELS, "Test", class_labels, run)
-    execute(PATH_VAL_IMAGES, PATH_VAL_LABELS, "Validation", class_labels, run)
+    # # wandb init
+    # wandb_init(args)
+    # class_labels = get_class_labels()
+    # run = wandb_run(args)
+    # PATH_TRAIN_IMAGES = "../open/yolo/train/"
+    # PATH_TRAIN_LABELS = "../open/yolo/train/"
+    # PATH_VAL_IMAGES = "../open/yolo/valid/"
+    # PATH_VAL_LABELS = "../open/yolo/valid/"
+    # execute(PATH_TRAIN_IMAGES, PATH_TRAIN_LABELS, "Test", class_labels, run)
+    # execute(PATH_VAL_IMAGES, PATH_VAL_LABELS, "Validation", class_labels, run)
     
     #model = YOLO(f"{MODEL}/train/weights/last.pt")
     model = YOLO("yolov8x")
