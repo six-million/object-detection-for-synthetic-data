@@ -32,6 +32,7 @@ for file in sorted(os.listdir(data_path)):
             info['id'] = index
             info['image_id'] = int(file[4:9])
             info['bbox'] = [float(tmp[1]), float(tmp[2]), float(tmp[3]) - float(tmp[1]), float(tmp[6]) - float(tmp[2])]
+            info['area'] = float(tmp[6]) * float(tmp[2])
             info['category_id'] = int(float(tmp[0]))
             annotations.append(info)
             index += 1
