@@ -1,28 +1,25 @@
-import os
-os.environ["WANDB_DISABLED"] = "true"
 import cv2
 import random
 from glob import glob
-from tqdm.auto import tqdm
-# import pandas as pd
-import numpy as np
-
-import cv2
-import yaml
-import shutil
-
+import os
+os.environ["WANDB_DISABLED"] = "true"
 import warnings
 warnings.filterwarnings(action='ignore')
 
+import yaml
+import shutil
 import torch
+import numpy as np
+from tqdm.auto import tqdm
+
+
+from argparse import ArgumentParser
 
 from ultralytics import YOLO
-#from IPython.display import clear_output
 from sklearn.model_selection import train_test_split
 
 import wandb
 from wandb.integration.yolov8 import add_callbacks as add_wandb_callbacks
-from argparse import ArgumentParser
 
 def parse_args():
     parser = ArgumentParser()
@@ -236,32 +233,32 @@ if __name__ == '__main__':
     seed_everything(args.seed)
 
     # # initialize
-    # initialize()
-    # image_paths = sorted(glob("../open/train/*.png"))
-    # txt_paths = sorted(glob("../open/train/*.txt"))
+    initialize()
+    image_paths = sorted(glob("../open/train/*.png"))
+    txt_paths = sorted(glob("../open/train/*.txt"))
 
-    # train_images_paths, valid_images_paths, train_txt_paths, valid_txt_paths = train_test_split(image_paths, txt_paths, test_size=0.1, random_state=args.seed)
+    train_images_paths, valid_images_paths, train_txt_paths, valid_txt_paths = train_test_split(image_paths, txt_paths, test_size=0.1, random_state=args.seed)
 
-    # make_yolo_dataset(train_images_paths, train_txt_paths, "train")
-    # make_yolo_dataset(valid_images_paths, valid_txt_paths, "valid")
-    # make_yolo_dataset(sorted(glob("../open/test/*.png")), None, "test")
+    make_yolo_dataset(train_images_paths, train_txt_paths, "train")
+    make_yolo_dataset(valid_images_paths, valid_txt_paths, "valid")
+    make_yolo_dataset(sorted(glob("../open/test/*.png")), None, "test")
 
-    # with open("../open/classes.txt", "r") as reader:
-    #     lines = reader.readlines()
-    #     classes = [line.strip().split(",")[1] for line in lines]
+    with open("../open/classes.txt", "r") as reader:
+        lines = reader.readlines()
+        classes = [line.strip().split(",")[1] for line in lines]
 
-    # yaml_data = {
-    #             "names": classes,
-    #             "nc": len(classes),
-    #             # "path": "/Users/wooyeolbaek/Downloads/untitled_folder/object-detection-for-synth-data/open/yolo",
-    #             "path": "/opt/ml/yolo8",
-    #             "train": "train",
-    #             "val": "valid",
-    #             "test": "test"
-    #             }
+    yaml_data = {
+                "names": classes,
+                "nc": len(classes),
+                # "path": "/Users/wooyeolbaek/Downloads/untitled_folder/object-detection-for-synth-data/open/yolo",
+                "path": "/opt/ml/object-detection-for-synthetic-data/open/yolo",
+                "train": "train",
+                "val": "valid",
+                "test": "test"
+                }
 
-    # with open("../open/yolo/custom.yaml", "w") as writer:
-    #     yaml.dump(yaml_data, writer)
+    with open("../open/yolo/custom.yaml", "w") as writer:
+        yaml.dump(yaml_data, writer)
 
     # # wandb init
     # wandb_init(args)
@@ -305,5 +302,3 @@ if __name__ == '__main__':
         warmup_bias_lr=args.warmup_bias_lr,
         augment=args.augment,
     )
-
-    
