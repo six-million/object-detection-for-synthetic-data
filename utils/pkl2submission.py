@@ -4,7 +4,7 @@ from tqdm import tqdm
 
 pkl_path = 'haha.pkl'
 
-with open('haha.pkl', 'rb') as f:
+with open(pkl_path, 'rb') as f:
     results = pickle.load(f)
 
 new = []
