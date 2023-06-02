@@ -18,23 +18,26 @@ from argparse import ArgumentParser
 from ultralytics import YOLO
 from sklearn.model_selection import train_test_split
 
-import wandb
-from wandb.integration.yolov8 import add_callbacks as add_wandb_callbacks
+# import wandb
+# from wandb.integration.yolov8 import add_callbacks as add_wandb_callbacks
 
 def parse_args():
     parser = ArgumentParser()
+
+    parser.add_argument("--model", type=str, default="yolov8x")
     
     # --model keys
     parser.add_argument('--data', type=str, default='./data/yolo/custom.yaml')
-    parser.add_argument('--imgsz', type=int, default=512)
+    parser.add_argument('--imgsz_w', type=int, default=512)
+    parser.add_argument('--imgsz_h', type=int, default=277)
     parser.add_argument('--epochs', type=int, default=200)
-    parser.add_argument('--batch', type=int, default=8)
-    parser.add_argument('--patience', type=int, default=5)
+    parser.add_argument('--batch', type=int, default=16)
+    parser.add_argument('--patience', type=int, default=20)
     parser.add_argument('--workers', type=int, default=16)
     #parser.add_argument('--device', type=str, default='cpu')
     parser.add_argument('--device', type=int, default=0)
     parser.add_argument('--exist_ok', type=bool, default=True)
-    parser.add_argument('--project', type=str, default='yolo')
+    #parser.add_argument('--project', type=str, default='yolo')
     parser.add_argument('--name', type=str, default='train')
     parser.add_argument('--seed', type=int, default=2023)
     parser.add_argument('--pretrained', type=bool, default=True)
@@ -52,6 +55,30 @@ def parse_args():
     parser.add_argument('--warmup_epochs', type=int, default=3)
     parser.add_argument('--warmup_momentum', type=float, default=0.8)
     parser.add_argument('--warmup_bias_lr', type=float, default=1e-4)
+    parser.add_argument("--project_name", type=str, default="v2")
+
+    parser.add_argument("--save_json", type=bool, default=True)
+    parser.add_argument("--save_hybrid", type=bool, default=True)
+    parser.add_argument('--conf', type=float, default=0.001)
+    parser.add_argument('--iou', type=float, default=0.5)
+    parser.add_argument('--max_det', type=float, default=50)
+    parser.add_argument("--half", type=bool, default=True)
+    parser.add_argument("--plots", type=bool, default=True)
+    parser.add_argument("--rect", type=bool, default=False)
+
+    parser.add_argument("--hsv_h", type=float, default=0.015)
+    parser.add_argument("--hsv_s", type=float, default=0.7)
+    parser.add_argument("--hsv_v", type=float, default=0.4)
+    parser.add_argument("--degrees", type=float, default=0.0)
+    parser.add_argument("--translate", type=float, default=0.1)
+    parser.add_argument("--scale", type=float, default=0.5)
+    parser.add_argument("--shear", type=float, default=0.0)
+    parser.add_argument("--perspective", type=float, default=0.0)
+    parser.add_argument("--flipud", type=float, default=0.0)
+    parser.add_argument("--fliplr", type=float, default=0.0)
+    parser.add_argument("--mosaic", type=float, default=0.0)
+    parser.add_argument("--mixup", type=float, default=0.2)
+    parser.add_argument("--copy_paste", type=float, default=0.2)
 
     # --wandb configs
     parser.add_argument("--wandb_project", type=str, default="object_detection_for_synthetic_data")
@@ -177,8 +204,8 @@ def initialize():
     if not os.path.exists("../open/yolo/valid"):
         os.makedirs("../open/yolo/valid")
         
-    if not os.path.exists("../open/yolo/test"):
-        os.makedirs("../open/yolo/test")    
+    # if not os.path.exists("../open/yolo/test"):
+    #     os.makedirs("../open/yolo/test")
         
     if not os.path.exists("./results"):
         os.makedirs("./results")
@@ -233,32 +260,32 @@ if __name__ == '__main__':
     seed_everything(args.seed)
 
     # # initialize
-    initialize()
-    image_paths = sorted(glob("../open/train/*.png"))
-    txt_paths = sorted(glob("../open/train/*.txt"))
+#     initialize()
+#     image_paths = sorted(glob("../open/train/*.png"))
+#     txt_paths = sorted(glob("../open/train/*.txt"))
 
-    train_images_paths, valid_images_paths, train_txt_paths, valid_txt_paths = train_test_split(image_paths, txt_paths, test_size=0.1, random_state=args.seed)
+#     train_images_paths, valid_images_paths, train_txt_paths, valid_txt_paths = train_test_split(image_paths, txt_paths, test_size=0.1, random_state=args.seed)
 
-    make_yolo_dataset(train_images_paths, train_txt_paths, "train")
-    make_yolo_dataset(valid_images_paths, valid_txt_paths, "valid")
-    make_yolo_dataset(sorted(glob("../open/test/*.png")), None, "test")
+#     make_yolo_dataset(train_images_paths, train_txt_paths, "train")
+#     make_yolo_dataset(valid_images_paths, valid_txt_paths, "valid")
 
-    with open("../open/classes.txt", "r") as reader:
-        lines = reader.readlines()
-        classes = [line.strip().split(",")[1] for line in lines]
+#     with open("../open/classes.txt", "r") as reader:
+#         lines = reader.readlines()
+#         classes = [line.strip().split(",")[1] for line in lines]
 
-    yaml_data = {
-                "names": classes,
-                "nc": len(classes),
-                # "path": "/Users/wooyeolbaek/Downloads/untitled_folder/object-detection-for-synth-data/open/yolo",
-                "path": "/opt/ml/object-detection-for-synthetic-data/open/yolo",
-                "train": "train",
-                "val": "valid",
-                "test": "test"
-                }
+#     yaml_data = {
+#                 "names": classes,
+#                 "nc": len(classes),
+#                 # "path": "/Users/wooyeolbaek/Downloads/untitled_folder/object-detection-for-synth-data/open/yolo",
+#                 # "path": "/opt/ml/object-detection-for-synthetic-data/open/yolo",
+#                 "path": "/home/elicer/open/yolo",
+#                 "train": "train",
+#                 "val": "valid",
+#                 "test": "test"
+#                 }
 
-    with open("../open/yolo/custom.yaml", "w") as writer:
-        yaml.dump(yaml_data, writer)
+#     with open("../open/yolo/custom.yaml", "w") as writer:
+#         yaml.dump(yaml_data, writer)
 
     # # wandb init
     # wandb_init(args)
@@ -272,11 +299,11 @@ if __name__ == '__main__':
     # execute(PATH_VAL_IMAGES, PATH_VAL_LABELS, "Validation", class_labels, run)
     
     #model = YOLO(f"{MODEL}/train/weights/last.pt")
-    model = YOLO("yolov8x")
-    add_wandb_callbacks(model, project=args.wandb_project)
+    model = YOLO(args.model)
+    #add_wandb_callbacks(model, project=args.wandb_project)
     results = model.train(
         data="../open/yolo/custom.yaml",
-        imgsz=args.imgsz,
+        imgsz=(args.imgsz_w, args.imgsz_h),
         save=True,
         save_period=10,
         epochs=args.epochs,
@@ -285,8 +312,9 @@ if __name__ == '__main__':
         workers=args.workers,
         device=args.device,
         exist_ok=args.exist_ok,
-        project=args.wandb_project,
-        name=args.wandb_name,
+        project=args.project_name,
+        #name=args.wandb_name,
+        name=args.model,
         seed=args.seed,
         pretrained=args.pretrained,
         resume=args.resume,
@@ -300,5 +328,28 @@ if __name__ == '__main__':
         warmup_epochs=args.warmup_epochs,
         warmup_momentum=args.warmup_momentum,
         warmup_bias_lr=args.warmup_bias_lr,
-        augment=args.augment,
+        #augment=args.augment,
+        
+        # save_json=args.save_json,
+        # save_hybrid=args.save_hybrid,
+        # conf=args.conf,
+        # iou=args.iou,
+        # max_det=args.max_det,
+        # half=args.half,
+        # plots=args.plots,
+        # rect=args.rect,
+        
+        hsv_h=args.hsv_h,
+        hsv_s=args.hsv_s,
+        hsv_v=args.hsv_v,
+        degrees=args.degrees,
+        translate=args.translate,
+        scale=args.scale,
+        shear=args.shear,
+        perspective=args.perspective,
+        flipud=args.flipud,
+        fliplr=args.fliplr,
+        mosaic=args.mosaic,
+        mixup=args.mixup,
+        copy_paste=args.copy_paste,
     )

@@ -31,7 +31,8 @@ def parse_args():
     parser.add_argument('--batch', type=int, default=8)
     parser.add_argument('--model_dir', type=str, default='./object_detection_for_synthetic_data/exp/weights/best.pt')
 
-    parser.add_argument('--imgsz', type=int, default=1024)
+    parser.add_argument('--imgsz_w', type=int, default=1920)
+    parser.add_argument('--imgsz_h', type=int, default=1080)
     parser.add_argument('--conf', type=float, default=0.25)
     parser.add_argument('--iou', type=float, default=0.7) # 0.2, 0.7
     parser.add_argument('--half', type=bool, default=False)
@@ -131,15 +132,15 @@ if __name__ == '__main__':
     args = parse_args()
     seed_everything(args.seed)
     
-    initialize()
-    make_yolo_dataset(sorted(glob("../open/test/*.png")), None, "test")
+    # initialize()
+    # make_yolo_dataset(sorted(glob("../open/test/*.png")), None, "test")
 
     model = YOLO(args.model_dir)
     test_image_paths = glob("../open/yolo/test/*.png")
     for i, image in tqdm(enumerate(get_test_image_paths(test_image_paths, args.batch)), total=int(len(test_image_paths)/args.batch)):
         model.predict(
             source=image,
-            imgsz=args.imgsz,
+            imgsz=(args.imgsz_w, args.imgsz_h),
             conf=args.conf,
             iou=args.iou,
             half=args.half,
