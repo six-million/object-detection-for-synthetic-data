@@ -17,16 +17,23 @@ data_root = '../open/'
 #     }))
 backend_args = None
 
+# dataset settings
 train_pipeline = [
     dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations', with_bbox=True),
-    dict(type='Resize', scale=(1024, 555), keep_ratio=True),
+    #dict(type='Resize', scale=(1024, 555), keep_ratio=True),
+    dict(
+        type='RandomResize',
+        scale=[(1024, 555), (512, 277)],
+        keep_ratio=True,
+        backend='pillow'),
     dict(type='RandomFlip', prob=0.5),
     dict(type='PackDetInputs')
 ]
 test_pipeline = [
     dict(type='LoadImageFromFile', backend_args=backend_args),
-    dict(type='Resize', scale=(1024, 555), keep_ratio=True),
+    #dict(type='Resize', scale=(1024, 555), keep_ratio=True),
+    dict(type='Resize', scale=(2000, 1200), keep_ratio=True, backend='pillow'),
     # If you don't have a gt annotation, delete the pipeline
     dict(type='LoadAnnotations', with_bbox=True),
     dict(
@@ -41,13 +48,16 @@ train_dataloader = dict(
     sampler=dict(type='DefaultSampler', shuffle=True),
     batch_sampler=dict(type='AspectRatioBatchSampler'),
     dataset=dict(
-        type=dataset_type,
-        data_root=data_root,
-        ann_file='train0.json',
-        data_prefix=dict(img='train/'),
-        filter_cfg=dict(filter_empty_gt=True, min_size=32),
-        pipeline=train_pipeline,
-        backend_args=backend_args))
+        type='RepeatDataset',
+        times=2,
+        dataset=dict(
+            type=dataset_type,
+            data_root=data_root,
+            ann_file='train0.json',
+            data_prefix=dict(img='train/'),
+            filter_cfg=dict(filter_empty_gt=True, min_size=32),
+            pipeline=train_pipeline,
+            backend_args=backend_args)))
 val_dataloader = dict(
     batch_size=1,
     num_workers=2,

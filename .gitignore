@@ -2,3 +2,4 @@ open/**
 **env
 .**
 **/__pycache__/**
+work_dirs/**
