@@ -28,13 +28,13 @@ def parse_args():
     # --optimizer vars
     parser.add_argument('--data', type=str, default='./data/yolo/custom.yaml')
     parser.add_argument('--seed', type=int, default=2023)
-    parser.add_argument('--batch', type=int, default=8)
+    parser.add_argument('--batch', type=int, default=16)
     parser.add_argument('--model_dir', type=str, default='./object_detection_for_synthetic_data/exp/weights/best.pt')
 
     parser.add_argument('--imgsz_w', type=int, default=1920)
     parser.add_argument('--imgsz_h', type=int, default=1080)
-    parser.add_argument('--conf', type=float, default=0.25)
-    parser.add_argument('--iou', type=float, default=0.7) # 0.2, 0.7
+    parser.add_argument('--conf', type=float, default=0.6) # 0.25
+    parser.add_argument('--iou', type=float, default=0.4) # 0.7
     parser.add_argument('--half', type=bool, default=False)
     parser.add_argument('--device', type=int, default=0)
     parser.add_argument('--show', type=bool, default=False)
