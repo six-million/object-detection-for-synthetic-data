@@ -1,7 +1,7 @@
 _base_ = [
-    './datasets/coco_detection_atss_aug.py',
-    './schedules/schedule_1x.py',
-    './default_runtime.py'
+    './_base_/datasets/coco_detection_atss_aug.py',
+    './_base_/schedules/schedule_1x.py',
+    './_base_/default_runtime.py'
 ]
 
 pretrained = 'https://github.com/SwinTransformer/storage/releases/download/v1.0.0/swin_large_patch4_window12_384_22k.pth'  # noqa
@@ -9,8 +9,10 @@ model = dict(
     type='ATSS',
     data_preprocessor=dict(
         type='DetDataPreprocessor',
-        mean=[123.675, 116.28, 103.53],
-        std=[58.395, 57.12, 57.375],
+        # mean=[123.675, 116.28, 103.53],
+        # std=[58.395, 57.12, 57.375],
+        mean=[105.83, 110.62, 111.49],
+        std=[46.50, 54.21, 59.66],
         bgr_to_rgb=True,
         pad_size_divisor=128),
     backbone=dict(
