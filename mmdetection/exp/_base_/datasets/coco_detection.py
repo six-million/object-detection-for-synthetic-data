@@ -66,7 +66,7 @@ test_dataloader = val_dataloader
 
 val_evaluator = dict(
     type='CocoMetric',
-    iou_thrs=[0.5, 0.75, 0.85, 0.95],
+    iou_thrs=0.85,
     ann_file=data_root + 'test0.json',
     metric='bbox',
     format_only=False,
@@ -90,7 +90,7 @@ test_dataloader = dict(
         pipeline=test_pipeline))
 test_evaluator = dict(
     type='CocoMetric',
-    iou_thrs=[0.5, 0.75, 0.85, 0.95],
+    iou_thrs=0.85,
     metric='bbox',
     format_only=True,
     ann_file=data_root + 'test.json',
