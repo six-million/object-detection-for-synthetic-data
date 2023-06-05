@@ -1,3 +1,24 @@
+# import datetime
+# from pytz import timezone
+# now = datetime.datetime.now(timezone('Asia/Seoul')).strftime('_%y%m%d_%H%M%S')
+# checkpoint_config = dict(interval=1)
+# # yapf:disable
+# log_config = dict(
+#     interval=50,
+#     hooks=[
+#         dict(type='TextLoggerHook'),
+#          dict(type='WandbLoggerHook',interval=1000,
+#             init_kwargs=dict(
+#                 project="object_detection",
+#                 entity ="wooyeolbaek",
+#                 name = "base"+now
+#             ),)
+#     ])
+# # yapf:enable
+# custom_hooks = [dict(type='NumClassCheckHook')]
+
+# dist_params = dict(backend='nccl')
+##################################################################################
 default_scope = 'mmdet'
 
 default_hooks = dict(

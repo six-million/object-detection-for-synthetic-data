@@ -17,44 +17,49 @@ data_root = '../open/'
 #     }))
 backend_args = None
 
-img_norm_cfg = dict(
-    mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True
-)
+# dataset settings
 train_pipeline = [
     dict(type='LoadImageFromFile', backend_args=backend_args),
     dict(type='LoadAnnotations', with_bbox=True),
-    dict(type='Resize', scale=(480, 260), keep_ratio=True),
+    #dict(type='Resize', scale=(1024, 555), keep_ratio=True),
+    dict(
+        type='RandomResize',
+        scale=[(1024, 555), (512, 277)],
+        keep_ratio=True,
+        backend='pillow'),
     dict(type='RandomFlip', prob=0.5),
-    dict(type="Normalize", **img_norm_cfg),
     dict(type='PackDetInputs')
 ]
 test_pipeline = [
     dict(type='LoadImageFromFile', backend_args=backend_args),
-    dict(type='Resize', scale=(480, 260), keep_ratio=True),
+    #dict(type='Resize', scale=(1024, 555), keep_ratio=True),
+    dict(type='Resize', scale=(2000, 1200), keep_ratio=True, backend='pillow'),
     # If you don't have a gt annotation, delete the pipeline
     dict(type='LoadAnnotations', with_bbox=True),
-    dict(type="Normalize", **img_norm_cfg),
     dict(
         type='PackDetInputs',
         meta_keys=('img_id', 'img_path', 'ori_shape', 'img_shape',
                    'scale_factor'))
 ]
 train_dataloader = dict(
-    batch_size=1,
+    batch_size=2,
     num_workers=2,
     persistent_workers=True,
     sampler=dict(type='DefaultSampler', shuffle=True),
     batch_sampler=dict(type='AspectRatioBatchSampler'),
     dataset=dict(
-        type=dataset_type,
-        data_root=data_root,
-        ann_file='train0.json',
-        data_prefix=dict(img='train/'),
-        filter_cfg=dict(filter_empty_gt=True, min_size=32),
-        pipeline=train_pipeline,
-        backend_args=backend_args))
+        type='RepeatDataset',
+        times=2,
+        dataset=dict(
+            type=dataset_type,
+            data_root=data_root,
+            ann_file='train0.json',
+            data_prefix=dict(img='train/'),
+            filter_cfg=dict(filter_empty_gt=True, min_size=32),
+            pipeline=train_pipeline,
+            backend_args=backend_args)))
 val_dataloader = dict(
-    batch_size=2,
+    batch_size=1,
     num_workers=2,
     persistent_workers=True,
     drop_last=False,
@@ -71,6 +76,7 @@ test_dataloader = val_dataloader
 
 val_evaluator = dict(
     type='CocoMetric',
+    iou_thrs=[0.5, 0.75, 0.85, 0.95],
     ann_file=data_root + 'test0.json',
     metric='bbox',
     format_only=False,
@@ -94,6 +100,7 @@ test_dataloader = dict(
         pipeline=test_pipeline))
 test_evaluator = dict(
     type='CocoMetric',
+    iou_thrs=[0.5, 0.75, 0.85, 0.95],
     metric='bbox',
     format_only=True,
     ann_file=data_root + 'test.json',
