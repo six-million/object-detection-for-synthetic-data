@@ -58,8 +58,8 @@ def parse_args():
     parser.add_argument('--warmup_momentum', type=float, default=0.8)
     parser.add_argument('--warmup_bias_lr', type=float, default=1e-4)
 
-    parser.add_argument('--box', type=float, default=10) # default 7.5
-    parser.add_argument('--cls', type=float, default=2) # default 0.5
+    parser.add_argument('--box', type=float, default=7.5) # default 7.5
+    parser.add_argument('--cls', type=float, default=0.5) # default 0.5
     parser.add_argument('--dfl', type=float, default=1.5)
     parser.add_argument('--label_smoothing', type=float, default=0.1)
     parser.add_argument('--nbs', type=int, default=16)
@@ -77,7 +77,7 @@ def parse_args():
     parser.add_argument("--hsv_h", type=float, default=0.015)
     parser.add_argument("--hsv_s", type=float, default=0.7)
     parser.add_argument("--hsv_v", type=float, default=0.4)
-    parser.add_argument("--degrees", type=float, default=0.0)
+    parser.add_argument("--degrees", type=float, default=0.1)
     parser.add_argument("--translate", type=float, default=0.0)
     parser.add_argument("--scale", type=float, default=0.1)
     parser.add_argument("--shear", type=float, default=0.1)
