@@ -6,3 +6,5 @@ open/**
 **.pkl
 **.csv
 **/mmdet.egg-info/
+**/**.pt
+**/**.pth

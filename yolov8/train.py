@@ -30,9 +30,9 @@ def parse_args():
     parser.add_argument("--model", type=str, default="yolov8x")
     
     # --model keys
-    parser.add_argument('--imgsz_w', type=int, default=512)
-    parser.add_argument('--imgsz_h', type=int, default=277)
-    parser.add_argument('--epochs', type=int, default=200)
+    parser.add_argument('--imgsz_w', type=int, default=1024)
+    parser.add_argument('--imgsz_h', type=int, default=555)
+    parser.add_argument('--epochs', type=int, default=300)
     parser.add_argument('--batch', type=int, default=16)
     parser.add_argument('--patience', type=int, default=20)
     parser.add_argument('--workers', type=int, default=16)
@@ -45,7 +45,7 @@ def parse_args():
     parser.add_argument('--pretrained', type=bool, default=True)
     parser.add_argument('--resume', type=bool, default=False)
     parser.add_argument('--optimizer', type=str, default='Adam')
-    parser.add_argument('--lr0', type=float, default=1e-4)
+    parser.add_argument('--lr0', type=float, default=1e-3)
     # parser.add_argument('--augment', type=bool, default=True)
     parser.add_argument('--val', type=bool, default=True)
     parser.add_argument('--cache', type=bool, default=True)
@@ -57,6 +57,13 @@ def parse_args():
     parser.add_argument('--warmup_epochs', type=int, default=5)
     parser.add_argument('--warmup_momentum', type=float, default=0.8)
     parser.add_argument('--warmup_bias_lr', type=float, default=1e-4)
+
+    parser.add_argument('--box', type=float, default=10) # default 7.5
+    parser.add_argument('--cls', type=float, default=2) # default 0.5
+    parser.add_argument('--dfl', type=float, default=1.5)
+    parser.add_argument('--label_smoothing', type=float, default=0.1)
+    parser.add_argument('--nbs', type=int, default=16)
+
 
     parser.add_argument("--save_json", type=bool, default=True)
     parser.add_argument("--save_hybrid", type=bool, default=True)
@@ -80,11 +87,6 @@ def parse_args():
     parser.add_argument("--mosaic", type=float, default=0.1)
     parser.add_argument("--mixup", type=float, default=0.1)
     parser.add_argument("--copy_paste", type=float, default=0.2)
-
-    # --wandb configs
-    parser.add_argument("--wandb_project", type=str, default="object_detection_for_synthetic_data")
-    parser.add_argument("--num_of_classes", type=int, default=34)
-    parser.add_argument("--wandb_name", type=str, default="exp")
 
     args = parser.parse_args()
 
@@ -250,8 +252,13 @@ if __name__ == '__main__':
         warmup_epochs=args.warmup_epochs,
         warmup_momentum=args.warmup_momentum,
         warmup_bias_lr=args.warmup_bias_lr,
-        #augment=args.augment,
+        box=args.box,
+        cls=args.cls,
+        dfl=args.dfl,
+        label_smoothing=args.label_smoothing,
+        nbs=args.nbs,
         
+        #augment=args.augment,
         # save_json=args.save_json,
         # save_hybrid=args.save_hybrid,
         # conf=args.conf,
