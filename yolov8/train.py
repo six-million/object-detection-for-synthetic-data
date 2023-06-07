@@ -23,8 +23,8 @@ from ultralytics import YOLO
 def parse_args():
     parser = ArgumentParser()
     # datasets
-    parser.add_argument("--train_json_dir", type=str, default="../open/5fold/train0.json")
-    parser.add_argument("--valid_json_dir", type=str, default="../open/5fold/valid0.json")
+    parser.add_argument("--train_json_dir", type=str, default="../open/5fold/train1.json")
+    parser.add_argument("--valid_json_dir", type=str, default="../open/5fold/valid1.json")
     parser.add_argument('--dataset_yml_dir', type=str, default='../open/yolo/train_yaml.yaml')
 
     parser.add_argument("--model", type=str, default="yolov8x")
@@ -32,7 +32,7 @@ def parse_args():
     # --model keys
     parser.add_argument('--imgsz_w', type=int, default=1024)
     parser.add_argument('--imgsz_h', type=int, default=555)
-    parser.add_argument('--epochs', type=int, default=300)
+    parser.add_argument('--epochs', type=int, default=250)
     parser.add_argument('--batch', type=int, default=16)
     parser.add_argument('--patience', type=int, default=20)
     parser.add_argument('--workers', type=int, default=16)
@@ -56,7 +56,7 @@ def parse_args():
     parser.add_argument('--weight_decay', type=float, default=0.0005)
     parser.add_argument('--warmup_epochs', type=int, default=5)
     parser.add_argument('--warmup_momentum', type=float, default=0.8)
-    parser.add_argument('--warmup_bias_lr', type=float, default=1e-4)
+    parser.add_argument('--warmup_bias_lr', type=float, default=5e-4)
 
     parser.add_argument('--box', type=float, default=7.5) # default 7.5
     parser.add_argument('--cls', type=float, default=0.5) # default 0.5
@@ -152,8 +152,6 @@ def initialize(args):
     if not os.path.exists(f"../open/yolo/{args.valid_json_dir.split('/')[-1].replace('.json', '')}"):
         os.makedirs(f"../open/yolo/{args.valid_json_dir.split('/')[-1].replace('.json', '')}")
         
-    if not os.path.exists("./results"):
-        os.makedirs("./results")
 
 
 def coco2yolo(json_dir, image_prefix='train', base_dir='../open', test=False):
@@ -217,7 +215,7 @@ if __name__ == '__main__':
             "path": "/opt/ml/object-detection-for-synthetic-data/open/yolo",
             # "path": "/home/elicer/open/yolo",
             "train": f'{args.train_json_dir.split("/")[-1].replace(".json", "")}',
-            "val": f'{args.train_json_dir.split("/")[-1].replace(".json", "")}',
+            "val": f'{args.valid_json_dir.split("/")[-1].replace(".json", "")}',
         }
 
         with open(args.dataset_yml_dir, "w") as writer:
