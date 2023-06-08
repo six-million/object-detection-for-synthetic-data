@@ -31,11 +31,11 @@ def parse_args():
     parser.add_argument('--data', type=str, default='./data/yolo/custom.yaml')
     parser.add_argument('--seed', type=int, default=2023)
     parser.add_argument('--batch', type=int, default=16)
-    parser.add_argument('--model_dir', type=str, default='./yolov8x/230606_141148/weights/epoch260.pt')
-    parser.add_argument('--project_name', type=str, default='yolov8x')   
+    parser.add_argument('--model_dir', type=str, default='./yolov8x/230607_222740/weights/epoch240.pt')
+    parser.add_argument('--project_name', type=str, default='yolov8x')
 
     parser.add_argument('--test_dir', type=str, default='../open/test/*.png')
-    # parser.add_argument('--test_dir', type=str, default='../open/yolo/valid0/*.png')
+    # parser.add_argument('--test_dir', type=str, default='../open/yolo/valid1/*.png')
     
 
     parser.add_argument('--imgsz_w', type=int, default=1920)
@@ -181,6 +181,7 @@ if __name__ == '__main__':
     # print(f'png - txt = {len(test_images - test_annos)}개: {test_images - test_annos}')
 
     results = []
+    # [1920, 1080] must be multiple of max stride 32, updating to [1920, 1088]
     for infer_txt in tqdm(infer_txts):
         base_file_name = infer_txt.split("/")[-1].split(".")[0]
         # image_height, image_width = cv2.imread(f"../open/test/{base_file_name}.png").shape[:2]
