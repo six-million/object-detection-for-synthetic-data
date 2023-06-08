@@ -23,8 +23,8 @@ from ultralytics import YOLO
 def parse_args():
     parser = ArgumentParser()
     # datasets
-    parser.add_argument("--train_json_dir", type=str, default="../open/5fold/train1.json")
-    parser.add_argument("--valid_json_dir", type=str, default="../open/5fold/valid1.json")
+    parser.add_argument("--train_json_dir", type=str, default="../open/5fold/train2.json")
+    parser.add_argument("--valid_json_dir", type=str, default="../open/5fold/valid2.json")
     parser.add_argument('--dataset_yml_dir', type=str, default='../open/yolo/train_yaml.yaml')
 
     parser.add_argument("--model", type=str, default="yolov8x")
@@ -32,15 +32,15 @@ def parse_args():
     # --model keys
     parser.add_argument('--imgsz_w', type=int, default=1024)
     parser.add_argument('--imgsz_h', type=int, default=555)
-    parser.add_argument('--epochs', type=int, default=250)
+    parser.add_argument('--epochs', type=int, default=260)
     parser.add_argument('--batch', type=int, default=16)
     parser.add_argument('--patience', type=int, default=20)
+    parser.add_argument('--save_period', type=int, default=20)
     parser.add_argument('--workers', type=int, default=16)
     #parser.add_argument('--device', type=str, default='cpu')
     parser.add_argument('--device', type=int, default=0)
     parser.add_argument('--exist_ok', type=bool, default=True)
     #parser.add_argument('--project', type=str, default='yolo')
-    parser.add_argument('--name', type=str, default='train')
     parser.add_argument('--seed', type=int, default=2023)
     parser.add_argument('--pretrained', type=bool, default=True)
     parser.add_argument('--resume', type=bool, default=False)
@@ -51,12 +51,12 @@ def parse_args():
     parser.add_argument('--cache', type=bool, default=True)
     parser.add_argument('--cos_lr', type=bool, default=True)
     parser.add_argument('--amp', type=bool, default=True)
-    parser.add_argument('--lrf', type=float, default=1e-4)
+    parser.add_argument('--lrf', type=float, default=5e-4)
     parser.add_argument('--momentum', type=float, default=0.937)
     parser.add_argument('--weight_decay', type=float, default=0.0005)
     parser.add_argument('--warmup_epochs', type=int, default=5)
     parser.add_argument('--warmup_momentum', type=float, default=0.8)
-    parser.add_argument('--warmup_bias_lr', type=float, default=5e-4)
+    parser.add_argument('--warmup_bias_lr', type=float, default=1e-4)
 
     parser.add_argument('--box', type=float, default=7.5) # default 7.5
     parser.add_argument('--cls', type=float, default=0.5) # default 0.5
@@ -69,7 +69,7 @@ def parse_args():
     parser.add_argument("--save_hybrid", type=bool, default=True)
     parser.add_argument('--conf', type=float, default=0.001)
     parser.add_argument('--iou', type=float, default=0.5)
-    parser.add_argument('--max_det', type=float, default=50)
+    parser.add_argument('--max_det', type=float, default=10)
     parser.add_argument("--half", type=bool, default=True)
     parser.add_argument("--plots", type=bool, default=True)
     parser.add_argument("--rect", type=bool, default=False)
@@ -85,8 +85,8 @@ def parse_args():
     parser.add_argument("--flipud", type=float, default=0.0)
     parser.add_argument("--fliplr", type=float, default=0.3)
     parser.add_argument("--mosaic", type=float, default=0.1)
-    parser.add_argument("--mixup", type=float, default=0.1)
-    parser.add_argument("--copy_paste", type=float, default=0.2)
+    parser.add_argument("--mixup", type=float, default=0.2)
+    parser.add_argument("--copy_paste", type=float, default=0.3)
 
     args = parser.parse_args()
 
@@ -227,7 +227,7 @@ if __name__ == '__main__':
         data=args.dataset_yml_dir,
         imgsz=(args.imgsz_w, args.imgsz_h),
         save=True,
-        save_period=20,
+        save_period=args.save_period,
         epochs=args.epochs,
         batch=args.batch,
         patience=args.patience,
