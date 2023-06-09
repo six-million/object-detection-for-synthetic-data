@@ -31,18 +31,19 @@ def parse_args():
     parser.add_argument('--data', type=str, default='./data/yolo/custom.yaml')
     parser.add_argument('--seed', type=int, default=2023)
     parser.add_argument('--batch', type=int, default=16)
-    parser.add_argument('--model_dir', type=str, default='./yolov8x/230607_222740/weights/epoch240.pt')
+    parser.add_argument('--model_dir', type=str, default='./yolov8x/230608_220707/weights/epoch260.pt')
     parser.add_argument('--project_name', type=str, default='yolov8x')
 
     parser.add_argument('--test_dir', type=str, default='../open/test/*.png')
-    # parser.add_argument('--test_dir', type=str, default='../open/yolo/valid1/*.png')
+    # parser.add_argument('--test_dir', type=str, default='../open/yolo/valid2/*.png')
     
 
     parser.add_argument('--imgsz_w', type=int, default=1920)
     parser.add_argument('--imgsz_h', type=int, default=1080)
     # parser.add_argument('--imgsz_w', type=int, default=1024)
     # parser.add_argument('--imgsz_h', type=int, default=555)
-    parser.add_argument('--conf', type=float, default=0.6) # 0.25
+    parser.add_argument('--conf', type=float, default=0.25) # 0.25
+    # parser.add_argument('--conf', type=float, default=0.25) # 0.25
     parser.add_argument('--iou', type=float, default=0.4) # 0.7
     parser.add_argument('--half', type=bool, default=False)
     parser.add_argument('--device', type=int, default=0)
