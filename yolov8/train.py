@@ -23,8 +23,8 @@ from ultralytics import YOLO
 def parse_args():
     parser = ArgumentParser()
     # datasets
-    parser.add_argument("--train_json_dir", type=str, default="../open/5fold/train3.json")
-    parser.add_argument("--valid_json_dir", type=str, default="../open/5fold/valid3.json")
+    parser.add_argument("--train_json_dir", type=str, default="../open/5fold/train4.json")
+    parser.add_argument("--valid_json_dir", type=str, default="../open/5fold/valid4.json")
     parser.add_argument('--dataset_yml_dir', type=str, default='../open/yolo/train_yaml.yaml')
 
     parser.add_argument("--model", type=str, default="yolov8x")
@@ -45,18 +45,18 @@ def parse_args():
     parser.add_argument('--pretrained', type=bool, default=True)
     parser.add_argument('--resume', type=bool, default=False)
     parser.add_argument('--optimizer', type=str, default='Adam')
-    parser.add_argument('--lr0', type=float, default=3e-3)
+    parser.add_argument('--warmup_bias_lr', type=float, default=5e-4)
+    parser.add_argument('--lr0', type=float, default=2e-3)
+    parser.add_argument('--lrf', type=float, default=5e-4)
     # parser.add_argument('--augment', type=bool, default=True)
     parser.add_argument('--val', type=bool, default=True)
     parser.add_argument('--cache', type=bool, default=True)
     parser.add_argument('--cos_lr', type=bool, default=True)
     parser.add_argument('--amp', type=bool, default=True)
-    parser.add_argument('--lrf', type=float, default=5e-4)
     parser.add_argument('--momentum', type=float, default=0.937)
     parser.add_argument('--weight_decay', type=float, default=0.0005)
     parser.add_argument('--warmup_epochs', type=int, default=5)
     parser.add_argument('--warmup_momentum', type=float, default=0.8)
-    parser.add_argument('--warmup_bias_lr', type=float, default=3e-4)
 
     parser.add_argument('--box', type=float, default=7.5) # default 7.5
     parser.add_argument('--cls', type=float, default=0.5) # default 0.5
@@ -86,7 +86,7 @@ def parse_args():
     parser.add_argument("--fliplr", type=float, default=0.3)
     parser.add_argument("--mosaic", type=float, default=0.1)
     parser.add_argument("--mixup", type=float, default=0.2)
-    parser.add_argument("--copy_paste", type=float, default=0.5)
+    parser.add_argument("--copy_paste", type=float, default=0.7)
 
     args = parser.parse_args()
 
