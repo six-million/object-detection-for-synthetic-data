@@ -14,19 +14,31 @@ from pycocotools.coco import COCO
 def parse_args():
     parser = ArgumentParser(description='ensemble')
     
-    parser.add_argument('--base_dir', type=str, default='./open/train')
+    parser.add_argument('--base_dir', type=str, default='./results')
     parser.add_argument('--test_dir', type=str, default='./open/test.json')
     parser.add_argument('--pred_names', type=list, default=[
         'test_fold0_epoch260.csv',
         'test_fold0_epoch280.csv',
         'test_fold1_epoch240.csv',
         'test_fold1_epoch250.csv',
+        'test_fold2_epoch240_iou6.csv',
+        'test_fold2_epoch260_iou6.csv',
+        'test_fold3_epoch240_conf6.csv',
+        'test_fold3_epoch260_conf6.csv',
+        'test_fold4_epoch240_iou6.csv',
+        'test_fold4_epoch260_iou6.csv',
     ])
     parser.add_argument('--weights', type=list, default=[
-        2,
         1,
-        3,
-        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
     ])
     parser.add_argument('--iou_thr', type=float, default=0.5)
     parser.add_argument('--skip_box_thr', type=float, default=0.0001)
@@ -59,18 +71,6 @@ def get_pred_dict(csv_dir):
 
 
 def main(args):
-    preds = [
-        'atss.csv',
-        'epoch200_original_size.csv',
-    ]
-    args.base_dir = './results'
-    args.test_dir = './open/test.json'
-    #weights=None
-    weights = [1, 1]
-    iou_thr=0.5
-    skip_box_thr=0.0001
-
-
     preds = [get_pred_dict(os.path.join(args.base_dir, pred)) for pred in args.pred_names]
     result_dict = defaultdict(list)
 
@@ -144,7 +144,7 @@ def main(args):
             result_df['point4_y'].append(ymax)
 
     result_df = pd.DataFrame(result_df).sort_values(by=['file_name', 'confidence'], ascending=[True, False]).reset_index(drop=True)
-    csv_name = 'ensemble_' + '_'.join([name.replace('.csv','') for name in args.pred_names]) + '_iou_thr_' + str(args.iou_thr) + '_skip_box_thr_' + str(args.skip_box_thr) + '.csv'
+    csv_name = 'ensemble_' + '_'.join([name.replace('.csv','') for name in args.pred_names]) + '.csv'
     result_df.to_csv(os.path.join(args.base_dir, csv_name), index=False)
 
 if __name__ == '__main__':
