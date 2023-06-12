@@ -32,7 +32,7 @@ def parse_args():
     # --model keys
     parser.add_argument('--imgsz_w', type=int, default=1024)
     parser.add_argument('--imgsz_h', type=int, default=555)
-    parser.add_argument('--epochs', type=int, default=260)
+    parser.add_argument('--epochs', type=int, default=280)
     parser.add_argument('--batch', type=int, default=16)
     parser.add_argument('--patience', type=int, default=20)
     parser.add_argument('--save_period', type=int, default=20)
@@ -59,7 +59,7 @@ def parse_args():
     parser.add_argument('--warmup_bias_lr', type=float, default=3e-4)
 
     parser.add_argument('--box', type=float, default=7.5) # default 7.5
-    parser.add_argument('--cls', type=float, default=0.5) # default 0.5
+    parser.add_argument('--cls', type=float, default=0.8) # default 0.5
     parser.add_argument('--dfl', type=float, default=1.5)
     parser.add_argument('--label_smoothing', type=float, default=0.1)
     parser.add_argument('--nbs', type=int, default=16)
