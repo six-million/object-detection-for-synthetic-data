@@ -23,19 +23,21 @@ from ultralytics import YOLO
 def parse_args():
     parser = ArgumentParser()
     # datasets
-    parser.add_argument("--train_json_dir", type=str, default="../open/5fold/train0.json")
-    parser.add_argument("--valid_json_dir", type=str, default="../open/5fold/valid0.json")
+    parser.add_argument("--train_json_dir", type=str, default="../open/5fold/train4.json")
+    parser.add_argument("--valid_json_dir", type=str, default="../open/5fold/valid4.json")
     parser.add_argument('--dataset_yml_dir', type=str, default='../open/yolo/train_yaml.yaml')
-
-    parser.add_argument("--model", type=str, default="yolov8x")
+    parser.add_argument("--model", type=str, default="epoch260.pt")
+    # yolov8x
     
     # --model keys
+    # parser.add_argument('--imgsz_w', type=int, default=1920) # 1920 # 1024
+    # parser.add_argument('--imgsz_h', type=int, default=1040) # 1040 # 555
     parser.add_argument('--imgsz_w', type=int, default=1024)
     parser.add_argument('--imgsz_h', type=int, default=555)
-    parser.add_argument('--epochs', type=int, default=280)
+    parser.add_argument('--epochs', type=int, default=300)
     parser.add_argument('--batch', type=int, default=16)
     parser.add_argument('--patience', type=int, default=20)
-    parser.add_argument('--save_period', type=int, default=20)
+    parser.add_argument('--save_period', type=int, default=10)
     parser.add_argument('--workers', type=int, default=16)
     #parser.add_argument('--device', type=str, default='cpu')
     parser.add_argument('--device', type=int, default=0)
@@ -45,24 +47,24 @@ def parse_args():
     parser.add_argument('--pretrained', type=bool, default=True)
     parser.add_argument('--resume', type=bool, default=False)
     parser.add_argument('--optimizer', type=str, default='Adam')
-    parser.add_argument('--lr0', type=float, default=3e-3)
-    # parser.add_argument('--augment', type=bool, default=True)
+    parser.add_argument('--warmup_bias_lr', type=float, default=5e-4)
+    parser.add_argument('--lr0', type=float, default=1e-3)
+    parser.add_argument('--lrf', type=float, default=5e-4)
+    parser.add_argument('--augment', type=bool, default=False)
     parser.add_argument('--val', type=bool, default=True)
     parser.add_argument('--cache', type=bool, default=True)
     parser.add_argument('--cos_lr', type=bool, default=True)
     parser.add_argument('--amp', type=bool, default=True)
-    parser.add_argument('--lrf', type=float, default=5e-4)
     parser.add_argument('--momentum', type=float, default=0.937)
     parser.add_argument('--weight_decay', type=float, default=0.0005)
     parser.add_argument('--warmup_epochs', type=int, default=5)
     parser.add_argument('--warmup_momentum', type=float, default=0.8)
-    parser.add_argument('--warmup_bias_lr', type=float, default=3e-4)
 
     parser.add_argument('--box', type=float, default=7.5) # default 7.5
-    parser.add_argument('--cls', type=float, default=0.8) # default 0.5
+    parser.add_argument('--cls', type=float, default=0.5) # default 0.5
     parser.add_argument('--dfl', type=float, default=1.5)
     parser.add_argument('--label_smoothing', type=float, default=0.1)
-    parser.add_argument('--nbs', type=int, default=16)
+    parser.add_argument('--nbs', type=int, default=8)
 
 
     parser.add_argument("--save_json", type=bool, default=True)
@@ -75,8 +77,8 @@ def parse_args():
     parser.add_argument("--rect", type=bool, default=False)
 
     parser.add_argument("--hsv_h", type=float, default=0.015)
-    parser.add_argument("--hsv_s", type=float, default=0.3)
-    parser.add_argument("--hsv_v", type=float, default=0.7)
+    parser.add_argument("--hsv_s", type=float, default=0.7)
+    parser.add_argument("--hsv_v", type=float, default=0.4)
     parser.add_argument("--degrees", type=float, default=0.1)
     parser.add_argument("--translate", type=float, default=0.0)
     parser.add_argument("--scale", type=float, default=0.1)
@@ -85,7 +87,7 @@ def parse_args():
     parser.add_argument("--flipud", type=float, default=0.0)
     parser.add_argument("--fliplr", type=float, default=0.3)
     parser.add_argument("--mosaic", type=float, default=0.1)
-    parser.add_argument("--mixup", type=float, default=0.2)
+    parser.add_argument("--mixup", type=float, default=0.0)
     parser.add_argument("--copy_paste", type=float, default=0.5)
 
     args = parser.parse_args()
@@ -154,7 +156,7 @@ def initialize(args):
         
 
 
-def coco2yolo(json_dir, image_prefix='train', base_dir='../open', test=False):
+def coco2yolo(json_dir, image_prefix='train', base_dir='../open', test=False, norm=True):
     # 저장할 폴더 생성
     json_name = json_dir.split('/')[-1].replace('.json', '')
     yolo_base_dir = os.path.join(base_dir, 'yolo', json_name)
@@ -220,9 +222,9 @@ if __name__ == '__main__':
 
         with open(args.dataset_yml_dir, "w") as writer:
             yaml.dump(train_yaml, writer)
-    
+
     #model = YOLO(f"{MODEL}/train/weights/last.pt")
-    model = YOLO(args.model)
+    model = YOLO('./yolov8x/fold4_230611_001435/weights/' + args.model)
     results = model.train(
         data=args.dataset_yml_dir,
         imgsz=(args.imgsz_w, args.imgsz_h),
@@ -234,12 +236,12 @@ if __name__ == '__main__':
         workers=args.workers,
         device=args.device,
         exist_ok=args.exist_ok,
-        name=datetime.now(timezone("Asia/Seoul")).strftime("%y%m%d_%H%M%S"),
+        name='fold4_230611_001435',
         #name=args.wandb_name,
         project=args.model,
         seed=args.seed,
-        pretrained=args.pretrained,
-        resume=args.resume,
+        # pretrained=args.pretrained,
+        # resume=args.resume,
         optimizer=args.optimizer,
         lr0=args.lr0,
         lrf=args.lrf,
@@ -256,7 +258,7 @@ if __name__ == '__main__':
         label_smoothing=args.label_smoothing,
         nbs=args.nbs,
         
-        #augment=args.augment,
+        augment=args.augment,
         # save_json=args.save_json,
         # save_hybrid=args.save_hybrid,
         # conf=args.conf,
