@@ -7,6 +7,9 @@ from argparse import ArgumentParser
 import warnings
 warnings.filterwarnings("ignore")
 
+from pytz import timezone
+from datetime import datetime
+
 from ensemble_boxes import *
 from pycocotools.coco import COCO
 
@@ -14,34 +17,47 @@ from pycocotools.coco import COCO
 def parse_args():
     parser = ArgumentParser(description='ensemble')
     
+    # parser.add_argument('--task', type=str, default='nms')
+    # parser.add_argument('--task', type=str, default='snms')
+    # parser.add_argument('--task', type=str, default='nmw')
+    parser.add_argument('--task', type=str, default='wbf')
+
     parser.add_argument('--base_dir', type=str, default='./results')
     parser.add_argument('--test_dir', type=str, default='./open/test.json')
     parser.add_argument('--pred_names', type=list, default=[
-        'test_fold0_epoch260.csv',
-        'test_fold0_epoch280.csv',
-        'test_fold1_epoch240.csv',
-        'test_fold1_epoch250.csv',
-        'test_fold2_epoch240_iou6.csv',
-        'test_fold2_epoch260_iou6.csv',
-        'test_fold3_epoch240_conf6.csv',
-        'test_fold3_epoch260_conf6.csv',
-        'test_fold4_epoch240_iou6.csv',
-        'test_fold4_epoch260_iou6.csv',
+        '0615.csv',
+        '0615_cnn.csv',
+
+        'fold0_epoch284_conf.csv',
+        'fold1_epoch250_conf.csv',
+        'fold2_epoch260_conf.csv',
+        'fold3_epoch260_conf.csv',
+        'ffold4_epoch280_conf.csv',
+
+        'wbf_0616_2_conf.csv',
+
+        'total_epoch42.csv',
+
+
     ])
     parser.add_argument('--weights', type=list, default=[
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
+        2,
+        2,
+
+        2,
+        2,
+        2,
+        2,
+        2,
+
+        2,
+
         1,
     ])
     parser.add_argument('--iou_thr', type=float, default=0.5)
     parser.add_argument('--skip_box_thr', type=float, default=0.0001)
+    parser.add_argument('--sigma', type=float, default=0.1)
+    parser.add_argument('--conf_type', type=str, default='avg')
 
     return parser.parse_args()
 
@@ -104,14 +120,26 @@ def main(args):
             scores_list.append(scores)
             labels_list.append(labels)
 
-        result_bboxes, result_scores, result_labels = weighted_boxes_fusion(
-            bboxes_list,
-            scores_list,
-            labels_list,
-            weights=args.weights,
-            iou_thr=args.iou_thr,
-            skip_box_thr=args.skip_box_thr,
-        )
+        # 빈 값 정리
+        # bboxes_list = [bboxes for bboxes in bboxes_list if len(bboxes) > 0]
+        # scores_list = [scores for scores in scores_list if len(scores) > 0]
+        # labels_list = [labels for labels in labels_list if len(labels) > 0]
+
+        if args.task == 'nms':
+            result_bboxes, result_scores, result_labels = nms(bboxes_list, scores_list, labels_list, 
+                                                              weights=args.weights, iou_thr=args.iou_thr)
+        elif args.task == 'snms':
+            result_bboxes, result_scores, result_labels = soft_nms(bboxes_list, scores_list, labels_list, 
+                                                                   weights=args.weights, iou_thr=args.iou_thr, sigma=args.sigma, 
+                                                                   thresh=args.skip_box_thr)
+        elif args.task == 'nmw':
+            result_bboxes, result_scores, result_labels = non_maximum_weighted(bboxes_list, scores_list, labels_list, 
+                                                                               weights=args.weights, iou_thr=args.iou_thr, 
+                                                                               skip_box_thr=args.skip_box_thr)
+        elif args.task == 'wbf':
+            result_bboxes, result_scores, result_labels = weighted_boxes_fusion(bboxes_list, scores_list, labels_list, 
+                                                                                weights=args.weights, iou_thr=args.iou_thr, 
+                                                                                skip_box_thr=args.skip_box_thr)
         
         for result_bbox, result_score, result_label in zip(result_bboxes, result_scores, result_labels):
             xmin, ymin, xmax, ymax = result_bbox
@@ -144,8 +172,10 @@ def main(args):
             result_df['point4_y'].append(ymax)
 
     result_df = pd.DataFrame(result_df).sort_values(by=['file_name', 'confidence'], ascending=[True, False]).reset_index(drop=True)
-    csv_name = 'ensemble_' + '_'.join([name.replace('.csv','') for name in args.pred_names]) + '.csv'
+    time = datetime.now(timezone("Asia/Seoul")).strftime("%y%m%d_%H%M%S")
+    csv_name = args.task + time + '.csv'
     result_df.to_csv(os.path.join(args.base_dir, csv_name), index=False)
+    print(f'saved {os.path.join(args.base_dir, csv_name)}')
 
 if __name__ == '__main__':
     args = parse_args()
