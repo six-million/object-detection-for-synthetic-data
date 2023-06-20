@@ -30,9 +30,12 @@ def parse_args():
     # --optimizer vars
     parser.add_argument('--data', type=str, default='./data/yolo/custom.yaml')
     parser.add_argument('--seed', type=int, default=2023)
-    parser.add_argument('--batch', type=int, default=16)
-    parser.add_argument('--model_dir', type=str, default='./yolov8x/230611_001435/weights/epoch260.pt')
+    parser.add_argument('--batch', type=int, default=32)
+    # parser.add_argument('--model_dir', type=str, default='./yolov8x/fold0_230612_151230/weights/epoch280.pt')
+    # parser.add_argument('--model_dir', type=str, default='./epoch260.pt/fold4_230611_001435/weights/epoch280.pt')
+    parser.add_argument('--model_dir', type=str, default='./yolov8x/230618_165011/weights/epoch40.pt')
     parser.add_argument('--project_name', type=str, default='yolov8x')
+    # parser.add_argument('--project_name', type=str, default='epoch260.pt')
 
     parser.add_argument('--test_dir', type=str, default='../open/test/*.png')
     # parser.add_argument('--test_dir', type=str, default='../open/yolo/valid4/*.png')
@@ -42,7 +45,7 @@ def parse_args():
     parser.add_argument('--imgsz_h', type=int, default=1080)
     # parser.add_argument('--imgsz_w', type=int, default=1024)
     # parser.add_argument('--imgsz_h', type=int, default=555)
-    parser.add_argument('--conf', type=float, default=0.25) # 0.25
+    parser.add_argument('--conf', type=float, default=0.01) # 0.25
     # parser.add_argument('--conf', type=float, default=0.25) # 0.25
     parser.add_argument('--iou', type=float, default=0.4) # 0.7
     parser.add_argument('--half', type=bool, default=False)
@@ -55,7 +58,7 @@ def parse_args():
     parser.add_argument('--max_det', type=int, default=100)
     parser.add_argument('--visualize', type=bool, default=True) # False
     parser.add_argument('--augment', type=bool, default=True)
-    parser.add_argument('--agnostic_nms', type=bool, default=True) # False
+    parser.add_argument('--agnostic_nms', type=bool, default=False) # False
     parser.add_argument('--name', type=str, default='predict')
     parser.add_argument('--exist_ok', type=bool, default=True)
     parser.add_argument('--verbose', type=bool, default=False)
@@ -193,5 +196,6 @@ if __name__ == '__main__':
                 results.append(yolo_to_labelme(line, image_width, image_height, infer_txt))
 
     df_submission = pd.DataFrame(data=results, columns=["file_name", "class_id", "confidence", "point1_x", "point1_y", "point2_x", "point2_y", "point3_x", "point3_y", "point4_x", "point4_y"])
-    df_submission.to_csv(f"{args.model_dir.replace('.pt','.csv')}", index=False)
+    # df_submission.to_csv(f"{args.model_dir.replace('.pt','.csv')}", index=False)
+    df_submission.to_csv(f"{args.model_dir+'.csv'}", index=False)
     
