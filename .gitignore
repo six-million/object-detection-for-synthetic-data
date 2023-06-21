@@ -2,3 +2,13 @@ open/**
 **env
 .**
 **/__pycache__/**
+**/work_dirs/**
+**.pkl
+**.csv
+**/mmdet.egg-info/
+**.pt
+**.pth
+**.jpg
+**.png
+**.yaml
+**.txt
