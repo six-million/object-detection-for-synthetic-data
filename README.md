@@ -3,9 +3,8 @@
 
 ## Overview
 [합성데이터를 활용한 자동차 탐지 AI 모델 개발](https://dacon.io/competitions/official/236107/overview/description)
-- 평가 방식: 실제 도로 위의 자동차 탐지와 34개의 세부 모델 판별
-- metric: mAP85
-- 결과: [Private 19th / 856 teams]
+- **평가 방식**: 실제 도로 위의 자동차 탐지와 34개의 세부 모델 판별
+- **결과**: *mAP85 0.96359 [Private 19th / 856 teams]*
 
 <img src="assets/pipeline.png">
 
